@@ -1,0 +1,54 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./menuTemplate.xhtml">
+
+            <ui:define name="content">
+                <h:form id="FormularioCliente">
+                    <h3>Lista de Clientes</h3>
+                    <p:dataTable id="dalist" value="#{beanCliente.listatodoslosCliente()}"
+                                 var="clien" selectionMode="single" selection="#{beanCliente.cliente}"
+                                 rowKey="#{clien.idcliente}">
+                        <p:column headerText="Nacionalidad">
+                            <h:outputText value="#{clien.tipoid}"/>
+                        </p:column>
+                        <p:column headerText="Numero">
+                            <h:outputText value="#{clien.numid}"/>
+                        </p:column>
+                        <p:column headerText="Dvid">
+                            <h:outputText value="#{clien.dvid}"/>
+                        </p:column>
+                        <p:column headerText="Digito Verificador">
+                            <h:outputText value="#{clien.nombre}"/>
+                        </p:column> 
+                        <f:facet name="footer">
+                            <p:commandButton id="createButton" actionListener="#{beanCliente.prepareCreate()}" oncomplete="PF('ClienteEditDialog').show()" value="Nuevo" icon="ui-icon-plus" update="mensaje,:ClienteEliForm"/>
+                            <p:commandButton id="editButton"   icon="ui-icon-pencil" value="Editar" actionListener="#{beanCliente.prepareEdit()}" oncomplete="PF('ClienteEditDialog').show()" disabled="#{empty beanCliente.cliente}" update="mensaje,:ClienteEliForm"/>
+                            <p:commandButton id="deleteButton" icon="ui-icon-trash"  value="Eliminar" disabled="#{empty beanCliente.cliente}" oncomplete="PF('ClienElitDialog').show()" update=":ClienteElitDlg"/>
+                         </f:facet>                        
+                    </p:dataTable>         
+                </h:form>
+                
+                <p:dialog id="ClienteEditDlg" widgetVar="ClienteEditDialog" modal="true" header="Cliente">
+                    <h:form id="ClienteEliForm">
+                       <h:panelGroup id="display">
+                          <p:fieldset legend="Datos del Cliente" >
+
+                          </p:fieldset>    
+                       </h:panelGroup>    
+                    </h:form>    
+                </p:dialog>  
+                    
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>

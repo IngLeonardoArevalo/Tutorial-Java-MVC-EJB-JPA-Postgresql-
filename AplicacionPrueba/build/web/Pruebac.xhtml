@@ -1,0 +1,121 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+    <body>
+
+        <ui:composition template="./menuTemplate.xhtml">
+
+            <ui:define name="content">
+<!--               <p:messages id="mensaje" showDetail="true"/>-->
+                     <p:messages id="mensaje" autoUpdate="false" severity="info, fatal" showSummary="false" showDetail="true"/>
+                <h:form id="FormularioCliente">
+                    <h3>Lista de Clientes</h3>
+                    <p:dataTable id="datalist" value="#{beanPruebaas.listatodoslosCliente()}" var="clien"
+                                 selectionMode="single" selection="#{beanPruebaas.cliente}"
+                                 rowKey="#{clien.idcliente}"
+                                 rows="10"
+                                 >   
+                        <p:ajax event="rowSelect"   update="createButton editButton deleteButton"/>
+                        <p:ajax event="rowUnselect" update="createButton editButton deleteButton"/>
+                        
+                        <p:column headerText="Nacionalidad">
+                            <h:outputText value="#{clien.tipoid}"/>
+                        </p:column>
+                        <p:column headerText="Numero">
+                            <h:outputText value="#{clien.numid}"/>
+                        </p:column>
+                        <p:column headerText="Dvid">
+                            <h:outputText value="#{clien.dvid}"/>
+                        </p:column>
+                        <p:column headerText="Digito Verificador">
+                            <h:outputText value="#{clien.nombre}"/>
+                        </p:column>
+                        <f:facet name="footer">
+                            <p:commandButton id="createButton" actionListener="#{beanPruebaas.prepareCreate()}" oncomplete="PF('ClienteEditDialog').show()" value="Nuevo" icon="ui-icon-plus" update="mensaje,:ClienteEliForm"/>
+                            <p:commandButton id="editButton"   icon="ui-icon-pencil" value="Editar" actionListener="#{beanPruebaas.prepareEdit()}" oncomplete="PF('ClienteEditDialog').show()" disabled="#{empty beanPruebaas.cliente}" update="mensaje,:ClienteEliForm"/>
+                            <p:commandButton id="deleteButton" icon="ui-icon-trash"  value="Eliminar" disabled="#{empty beanPruebaas.cliente}" oncomplete="PF('ClienElitDialog').show()" update=":ClienteElitDlg"/>
+                        </f:facet>                        
+                        
+                    </p:dataTable>         
+                </h:form>
+                     
+
+                <p:dialog id="ClienteEditDlg" widgetVar="ClienteEditDialog" modal="true" header="Cliente">
+                    <h:form id="ClienteEliForm">
+                        <h:panelGroup id="display">
+                            <p:fieldset legend="Datos del Cliente" >
+                                <p:panelGrid columns="1" styleClass="companyHeaderGrid" style="width: 500px;">
+
+                                    <p:column>
+                                        <p:panelGrid columns="6" style="width: 800px;">
+                                            <p:column>
+                                                <p:outputLabel value="Identificador" for="txtIdentificador" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:selectOneMenu id="txtIdentificador" value="#{beanPruebaas.cliente.tipoid}"  title="Identificador" required="true" validatorMessage="Ingrese Identificador">
+                                                    <f:selectItem itemLabel="Seleccione Opcion" itemValue="" />
+                                                    <f:selectItem itemLabel="Venezolano" itemValue="V"/>
+                                                    <f:selectItem itemLabel="Extranjero" itemValue="E"/>
+                                                    <f:selectItem itemLabel="Pasaporte" itemValue="P"/>
+                                                    <f:selectItem itemLabel="Juridico" itemValue="J"/>
+                                                </p:selectOneMenu>                                
+                                            </p:column>
+
+                                            <p:column>
+                                                <p:outputLabel value="Numero" for="txtNumero" />
+                                            </p:column>
+                                            <p:column>
+                                                <p:inputText id="txtNumero" value="#{beanPruebaas.cliente.numid}" title="Numero" required="true" validatorMessage="Ingrese Numero"/>
+                                            </p:column>
+
+                                            <p:column>
+                                                <p:outputLabel value="Numeroid" for="txtNumeroid" />
+                                            </p:column>
+                                            <p:column style="width: 10px;">
+                                                <p:spinner id="txtNumeroid" value="#{beanPruebaas.cliente.dvid}" title="Numero" required="true" validatorMessage="Ingrese Numeroid" min="0" max="1000"/>
+                                            </p:column>
+                                        </p:panelGrid>    
+                                    </p:column>
+
+
+                                    <p:column>
+                                        <p:outputLabel value="Nombre" for="txtNombre" />
+                                        <p:inputText id="txtNombre" value="#{beanPruebaas.cliente.nombre}" title="Nombre" required="true" validatorMessage="Ingrese Nombre" style="width: 350px;"/>
+                                    </p:column>
+
+                                    <p:column>
+                                        <p:outputLabel value="Facha de Nacimiento" for="txtFechanac" />
+                                        <p:calendar id="txtFechanac" value="#{beanPruebaas.cliente.fecnac}" title="Fecha Nacimiento" required="true" validatorMessage="Ingrese La fecha de Nacimiento" pattern="dd/MM/yyyy" locale="es"/>
+                                    </p:column>
+
+                                </p:panelGrid>
+                            </p:fieldset>
+                            <p:commandButton actionListener="#{beanPruebaas.registrar()}" oncomplete="PF('ClienteEditDialog').hide()" value="Actualizar" update=":FormularioCliente,:mensaje" icon="ui-icon-check" />
+                            <p:commandButton actionListener="#{beanPruebaas.limpiarSelect()}" value="Cancelar" onclick="ClienteEditDialog.hide()" immediate="true" />
+                        </h:panelGroup>
+                    </h:form>
+                </p:dialog>                  
+                     
+                <p:dialog id="ClienteElitDlg" widgetVar="ClienElitDialog" modal="true" header="Eliminar">
+                    <h:form id="UsurEliForm">
+                        <p:outputLabel value=" Correo: "/>
+                        <p:outputLabel value="#{beanPruebaas.cliente.nombre}"/>
+                        <p:outputLabel value=" Mensaje: "/>
+                        <p:outputLabel value="  Esta seguro que desea eliminar este Registro  "/>
+
+                        <p:commandButton actionListener="#{beanPruebaas.destroy()}" oncomplete="PF('ClienElitDialog').hide()" value="Eliminar" update=":FormularioCliente,:mensaje"/>
+                        <p:commandButton actionListener="#{beanPruebaas.limpiarSelect()}" value="Cancelar" onclick="ClienElitDialog.hide()" immediate="true" update=":FormularioCliente,:mensaje"/>
+                    </h:form>
+                </p:dialog>                      
+                     
+            </ui:define>
+
+        </ui:composition>
+
+    </body>
+</html>
